@@ -1,57 +1,55 @@
 <div align="center">
 
-# zapplyjobs
+<img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/zapply-jobs.png" alt="Zapply Jobs" height="60">
 
-**Free job boards, internship lists, and career resources — updated automatically, every 15 minutes.**
+### Free job boards and career resources for students & new grads
+**Auto-updated every 15 minutes from 330+ companies**
+
+[![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/UswBsduwcD)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Autofill%20Extension-4285F4?style=flat&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom)
 
 </div>
 
 ---
 
-## Research & Internship Lists
+## 📋 Curated Lists
 
-Curated, community-maintained. No login required.
+<p>
+  <a href="https://github.com/zapplyjobs/Research-Internships-for-Undergraduates"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-rifu.png" alt="Research Internships for Undergraduates" height="50"></a>&nbsp;&nbsp;
+  <a href="https://github.com/zapplyjobs/underclassmen-internships"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-uci.png" alt="Underclassmen Internships" height="50"></a>
+</p>
 
-| Repo | What it is | Stars |
-|------|-----------|-------|
-| [Research Internships for Undergraduates](https://github.com/zapplyjobs/Research-Internships-for-Undergraduates) | Research programs, fellowships, and summer positions worldwide | ⭐ 4,866 |
-| [Underclassmen Internships](https://github.com/zapplyjobs/underclassmen-internships) | Internships open to freshmen & sophomores (not just juniors) | ⭐ 1,184 |
-| [Internships 2026](https://github.com/zapplyjobs/Internships-2026) | Live tech internships — updated every 15 min | ⭐ 33 |
-
----
-
-## Live Job Boards
-
-Auto-updated from 330+ companies across Greenhouse, Lever, Ashby, Workday, and more.
-
-| Repo | Domain | Stars |
-|------|--------|-------|
-| [New Grad Jobs 2026](https://github.com/zapplyjobs/New-Grad-Jobs-2026) | All fields — 13,000+ live roles | ⭐ 100 |
-| [Software Engineering Jobs](https://github.com/zapplyjobs/New-Grad-Software-Engineering-Jobs-2026) | SWE & backend | ⭐ 21 |
-| [Data Science Jobs](https://github.com/zapplyjobs/New-Grad-Data-Science-Jobs-2026) | DS, ML & analytics | ⭐ 31 |
-| [Hardware Engineering Jobs](https://github.com/zapplyjobs/New-Grad-Hardware-Engineering-Jobs-2026) | Hardware, EE & embedded | ⭐ 29 |
-| [Healthcare Jobs](https://github.com/zapplyjobs/New-Grad-Healthcare-Jobs-2026) | Nursing, PT, pharmacy & allied health | ⭐ 12 |
+Community-maintained. Research programs, fellowships, and internships open to freshmen & sophomores.
 
 ---
 
-## Free Resources
+## ⚡ Live Job Boards
 
-| Repo | What it is |
-|------|-----------|
-| [Resume Samples 2026](https://github.com/zapplyjobs/resume-samples-2026) | ATS-friendly templates for tech, healthcare, finance |
-| [Interview Handbook 2026](https://github.com/zapplyjobs/interview-handbook-2026) | Behavioral & curveball questions, STAR method guides |
+Updated every 15 minutes from Greenhouse, Lever, Ashby, Workday, SmartRecruiters & more.
 
----
-
-## Zapply — Autofill Extension
-
-Apply to jobs in seconds. The extension fills your application forms automatically across 500+ job sites.
-
-[**Install on Chrome →**](https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom) &nbsp;·&nbsp; [**Visit zapply.jobs →**](https://zapply.jobs/?ref=github)
+<p>
+  <a href="https://github.com/zapplyjobs/New-Grad-Jobs-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-ngj.png" alt="New Grad Jobs 2026" height="50"></a>&nbsp;&nbsp;
+  <a href="https://github.com/zapplyjobs/Internships-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-int.png" alt="Internships 2026" height="50"></a>&nbsp;&nbsp;
+  <a href="https://github.com/zapplyjobs/New-Grad-Software-Engineering-Jobs-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-sej.png" alt="Software Engineering Jobs" height="50"></a>&nbsp;&nbsp;
+  <a href="https://github.com/zapplyjobs/New-Grad-Data-Science-Jobs-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-dsj.png" alt="Data Science Jobs" height="50"></a>&nbsp;&nbsp;
+  <a href="https://github.com/zapplyjobs/New-Grad-Hardware-Engineering-Jobs-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-hej.png" alt="Hardware Engineering Jobs" height="50"></a>&nbsp;&nbsp;
+  <a href="https://github.com/zapplyjobs/New-Grad-Healthcare-Jobs-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-nsj.png" alt="Healthcare Jobs" height="50"></a>
+</p>
 
 ---
 
-## Community
+## 🔧 Apply Faster
 
-[**Join our Discord →**](https://discord.gg/UswBsduwcD) — job alerts, career advice, and a growing network of students and new grads.
+<a href="https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/zapply-button.png" alt="Install Zapply" height="40"></a>
+
+Autofills job applications across 500+ job sites. Free. No account required for basic use.
+
+---
+
+## 🎓 Free Resources
+
+<p>
+  <a href="https://github.com/zapplyjobs/resume-samples-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-rss.png" alt="Resume Samples" height="50"></a>&nbsp;&nbsp;
+  <a href="https://github.com/zapplyjobs/interview-handbook-2026"><img src="https://raw.githubusercontent.com/zapplyjobs/Research-Internships-for-Undergraduates/main/images/repo-ihb.png" alt="Interview Handbook" height="50"></a>
+</p>
 
