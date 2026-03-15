@@ -12,7 +12,7 @@
 &nbsp;&nbsp;
 <a href="https://www.instagram.com/zapplyjobs"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/instagram-icon-2d.png" alt="Instagram" height="60"></a>
 &nbsp;&nbsp;
-<a href="https://www.tiktok.com/@zapplyjobs"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/tiktok-icon-2d.png" alt="TikTok" height="60"></a>
+<a href="https://www.tiktok.com/@zapply.jobs"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/tiktok-icon-2d.png" alt="TikTok" height="60"></a>
 
 </div>
 
