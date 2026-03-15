@@ -9,9 +9,11 @@ Auto-updated every 15 minutes from 381+ companies across 9 ATS platforms
 
 <br>
 
-[![Discord](https://img.shields.io/badge/Discord-Join_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/UswBsduwcD)
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Autofill_Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom)
-[![Website](https://img.shields.io/badge/zapply.jobs-Visit-FF6B35?style=for-the-badge&logo=safari&logoColor=white)](https://zapply.jobs)
+<a href="https://discord.gg/UswBsduwcD"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/discord-2d.png" alt="Discord" width="220"></a>
+&nbsp;&nbsp;
+<a href="https://www.instagram.com/zapplyjobs"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/instagram-icon-2d.png" alt="Instagram" width="110"></a>
+&nbsp;&nbsp;
+<a href="https://www.tiktok.com/@zapplyjobs"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/tiktok-icon-2d.png" alt="TikTok" width="110"></a>
 
 </div>
 
@@ -54,12 +56,10 @@ Community-maintained. Research programs, fellowships, and internships open to fr
 ## 🔧 Apply Faster
 
 <p align="center">
-  <a href="https://zapply.jobs/?ref=github"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/zapply-button.png" alt="Visit zapply.jobs" width="240"></a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/extension-button.png" alt="Install Chrome Extension" width="240"></a>
+  <a href="https://zapply.jobs/?ref=github"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/zapply-button.png" alt="Visit zapply.jobs" width="280"></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2026/main/images/extension-button.png" alt="Install Chrome Extension" width="260"></a>
 </p>
-
-<p align="center">Autofills job applications across 500+ job sites. Free.</p>
 
 ---
 
