@@ -8,9 +8,9 @@
 
 <br>
 
-<a href="https://discord.com/invite/UswBsduwcD"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-<a href="https://www.linkedin.com/company/zapply-jobs/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-<a href="https://www.youtube.com/@zapplyjobs"><img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube"></a>
+<a href="https://discord.com/invite/UswBsduwcD"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/discord-button-1.png" alt="Discord" height="60"></a>
+&nbsp;&nbsp;
+<a href="https://www.linkedin.com/company/zapply-jobs/"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/linkedin-button-1.png" alt="LinkedIn" height="60"></a>
 
 </div>
 
@@ -55,9 +55,11 @@
 ## 🔧 Apply Faster
 
 <p align="center">
-  <a href="https://app.zapply.jobs/onboarding/?ref=gh-org-profile"><img src="https://img.shields.io/badge/Get_Started-black?style=for-the-badge" alt="Get Started"></a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom"><img src="https://img.shields.io/badge/Chrome_Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Install Chrome Extension"></a>
+  <a href="https://app.zapply.jobs/onboarding/?ref=gh-org-profile"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/apply-faster-banner.png" alt="Apply to jobs in seconds with Zapply" width="500"></a>
+</p>
+
+<p align="center">
+  <a href="https://app.zapply.jobs/onboarding/?ref=gh-org-profile"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/get-started-button.png" alt="Get Started" width="300"></a>
 </p>
 
 ---
