@@ -57,11 +57,9 @@
 ## 🔧 Apply Faster
 
 <p align="center">
-  <a href="https://app.zapply.jobs/onboarding/?ref=gh-org-profile"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/apply-faster-banner.png" alt="Apply to jobs in seconds with Zapply" width="500"></a>
-</p>
-
-<p align="center">
-  <a href="https://app.zapply.jobs/onboarding/?ref=gh-org-profile"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/get-started-button.png" alt="Get Started" width="300"></a>
+  <a href="https://zapply.jobs/?ref=github"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/zapply-button.png" alt="Visit zapply.jobs" height="60"></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://chromewebstore.google.com/detail/zapply-instant-autofill-f/lkomdndabnpakcabffgobiejimpamjom"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/extension-button.png" alt="Install Chrome Extension" height="60"></a>
 </p>
 
 ---
