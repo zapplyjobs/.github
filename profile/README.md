@@ -11,6 +11,8 @@
 <a href="https://discord.com/invite/UswBsduwcD"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/discord-button-1.png" alt="Discord" height="60"></a>
 &nbsp;&nbsp;
 <a href="https://www.linkedin.com/company/zapply-jobs/"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/linkedin-button-1.png" alt="LinkedIn" height="60"></a>
+&nbsp;&nbsp;
+<a href="https://www.youtube.com/@zapplyjobs"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/youtube.png" alt="YouTube" height="60"></a>
 
 </div>
 
