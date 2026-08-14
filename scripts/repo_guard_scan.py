@@ -18,6 +18,7 @@ BAD_BLOB_SHAS = {
 }
 MARKERS = [b"A11--#", b"eth.blockscout.com", b"166.88.134.62"]
 FONT_MAGICS = {b"wOFF": (0, 4, "woff"), b"true": (0, 4, "ttf"), b"OTTO": (0, 4, "otf"), b"wOF2": (0, 4, "woff2"), b"\x00\x01\x00\x00": (0, 4, "ttf-sfnt")}
+ATTACK_CONFIG_HINTS = ("createRequire(import.meta.url)",)
 
 findings = []
 
