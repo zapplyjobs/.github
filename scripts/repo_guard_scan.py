@@ -17,8 +17,7 @@ BAD_BLOB_SHAS = {
     "5e226620d2e360205cc8634e3c581a008d382561": ".vscode/tasks.json folderOpen auto-run",
 }
 MARKERS = [b"A11--#", b"eth.blockscout.com", b"166.88.134.62"]
-FONT_MAGICS = {b"wOFF": (0, 4, "woff"), b"true": (0, 4, "ttf"), b"OTTO": (0, 4, "otf"), b"wOF2": (0, 4, "woff2")}
-ATTACK_CONFIG_HINTS = ("createRequire(import.meta.url)",)
+FONT_MAGICS = {b"wOFF": (0, 4, "woff"), b"true": (0, 4, "ttf"), b"OTTO": (0, 4, "otf"), b"wOF2": (0, 4, "woff2"), b"\x00\x01\x00\x00": (0, 4, "ttf-sfnt")}
 
 findings = []
 
