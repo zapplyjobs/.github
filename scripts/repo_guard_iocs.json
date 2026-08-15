@@ -1,0 +1,39 @@
+{
+ "_meta": {
+  "description": "NullReceiver campaign IOCs \u2014 SINGLE SOURCE OF TRUTH for repo_guard_scan.py (push-time) and inf-org-malware-rescan.sh (weekly). Update THIS file only.",
+  "updated": "2026-08-15"
+ },
+ "bad_blob_shas": {
+  "c1a9ec600e907276f454ab23fd3795bd021c2386": "fa-solid-400.woff2 payload (31,206B JS)",
+  "5e226620d2e360205cc8634e3c581a008d382561": ".vscode/tasks.json folderOpen auto-run"
+ },
+ "markers": [
+  "A11--#",
+  "eth.blockscout.com",
+  "166.88.134.62"
+ ],
+ "attack_config_hints": [
+  "createRequire(import.meta.url)"
+ ],
+ "oversized_config_bytes": 6000,
+ "watched_configs": [
+  "eslint.config.mjs",
+  "eslint.config.js",
+  "babel.config.js",
+  "astro.config.mjs",
+  "next.config.mjs",
+  "next.config.js",
+  "vite.config.js",
+  "vite.config.ts",
+  "eslint.config.ts",
+  "webpack.config.js",
+  "rollup.config.mjs"
+ ],
+ "font_magics_hex": [
+  "774f4646",
+  "774f4632",
+  "4f54544f",
+  "74727565",
+  "00010000"
+ ]
+}
