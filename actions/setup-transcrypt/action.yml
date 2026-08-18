@@ -1,0 +1,20 @@
+name: 'Setup transcrypt'
+description: >-
+  Install transcrypt (pinned 5effa13) from THIS repo's checkout — fetched by the
+  Actions runner via the git path, immune to raw.githubusercontent CDN throttling.
+  Replaces the per-workflow curl download that silently installed 429 rate-limit
+  pages as the binary (INF-UNLOCK-INTERMITTENT-1, 2026-08-17: 8 workflow failures
+  in one throttled window). Callers still run their own unlock steps with
+  TRANSCRYPT_PASSWORD afterwards.
+runs:
+  using: 'composite'
+  steps:
+    - name: Install pinned transcrypt from the action repo
+      shell: bash
+      run: |
+        set -euo pipefail
+        SRC="${GITHUB_ACTION_PATH}/transcrypt"
+        head -c2 "$SRC" | grep -q '#!' || { echo "::error::vendored transcrypt is not a script"; exit 1; }
+        install -m 0755 "$SRC" /usr/local/bin/transcrypt
+        transcrypt --version | head -1 || true
+        echo "transcrypt installed from action checkout (pinned 5effa13, sha256 $(sha256sum "$SRC" | cut -c1-16))"
