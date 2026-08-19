@@ -40,6 +40,8 @@
   <a href="https://github.com/zapplyjobs/Canada-Jobs-2027"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/repo-ngj-can.png" alt="Canada Jobs 2027" height="50"></a>
   &nbsp;
   <a href="https://github.com/zapplyjobs/Canada-Internships-2027"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/repo-int-can.png" alt="Canada Internships 2027" height="50"></a>
+  &nbsp;
+  <a href="https://github.com/zapplyjobs/New-Grad-IT-Jobs-2027"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/new-grad-it-jobs-button.png" alt="New Grad IT Jobs 2027" height="50"></a>
 </p>
 
 ---
