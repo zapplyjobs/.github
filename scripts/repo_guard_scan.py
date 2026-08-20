@@ -18,6 +18,7 @@ BAD_BLOB_SHAS = IOCS["bad_blob_shas"]
 MARKERS = [m.encode() for m in IOCS["markers"]]
 ATTACK_CONFIG_HINTS = IOCS["attack_config_hints"]
 WEAK_CONFIG_HINTS = IOCS.get("weak_config_hints", [])
+MALICIOUS_PACKAGES = IOCS.get("malicious_packages", [])
 CONFIG_SIZE_LIMIT = IOCS["oversized_config_bytes"]
 CONFIGS = set(IOCS["watched_configs"])
 FONT_MAGICS = [bytes.fromhex(h) for h in IOCS["font_magics_hex"]]
@@ -93,6 +94,27 @@ for _, p in objs:
                     findings.append(f"{p} contains shim hint {hint!r} with corroboration (marker/oversize)")
         if len(blob) > CONFIG_SIZE_LIMIT:
             findings.append(f"{p} is {len(blob)}B (config files are normally <6KB — inspect for appended payload)")
+
+# 6. Malicious-package names in dependency manifests/locks — the ORIGINAL infection
+# vector. Zero GitHub advisories exist for these names (verified 2026-08-20), so
+# Dependabot can never fire on them; direct string check is the only technical control.
+import re as _re
+for _, p in objs:
+    if p in ("package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "npm-shrinkwrap.json"):
+        blob = sh("git", "show", f"HEAD:{p}").stdout.decode(errors="replace")
+        for pkg in MALICIOUS_PACKAGES:
+            if _re.search(rf'(?<![\\w/.-]){_re.escape(pkg)}(?![\\w/.-])', blob):
+                findings.append(f"{p} references known-malicious package {pkg!r} (NullReceiver campaign)")
+
+# 7. Hex-obfuscation corroborator for weak hints: campaign payloads carry distinctive
+# _0x-hex identifier tables. A markerless sub-6KB shim WITH _0x tables is now caught
+# (closes the window the createRequire demotion opened — sec-review finding, 2026-08-20).
+_0X_RE = _re.compile(r"_0x[a-f0-9]{3,}")
+for _, p in objs:
+    if os.path.basename(p) in CONFIGS:
+        blob = sh("git", "show", f"HEAD:{p}").stdout
+        if len(_0X_RE.findall(blob.decode(errors="replace"))) >= 5:
+            findings.append(f"{p} contains hex-obfuscation identifier table (_0x) — inspect for disguised payload")
 
 if findings:
     print("::error::repo-guard FAILED — known malware/injection shapes detected")

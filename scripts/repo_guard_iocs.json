@@ -1,7 +1,8 @@
 {
  "_meta": {
   "description": "NullReceiver campaign IOCs \u2014 SINGLE SOURCE OF TRUTH for repo_guard_scan.py (push-time) and inf-org-malware-rescan.sh (weekly). Update THIS file only.",
-  "updated": "2026-08-20"
+  "updated": "2026-08-20 (v2: packages + corroborators)",
+  "note": "malicious_packages: the ORIGINAL NullReceiver infection vector \u2014 zero GH advisories exist for these names (verified 2026-08-20), so Dependabot can never fire; the scanner checks manifest/lock files directly."
  },
  "bad_blob_shas": {
   "c1a9ec600e907276f454ab23fd3795bd021c2386": "fa-solid-400.woff2 payload (31,206B JS)",
@@ -36,5 +37,14 @@
  ],
  "weak_config_hints": [
   "createRequire(import.meta.url)"
+ ],
+ "malicious_packages": [
+  "bianira-ui",
+  "fluid-type-ui",
+  "post-css-transfer",
+  "scrollbar-hide-plugin",
+  "tailwind-anim",
+  "tailwind-animation-founder",
+  "tailwindcss-anim"
  ]
 }
