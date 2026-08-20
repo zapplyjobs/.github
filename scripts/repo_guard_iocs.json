@@ -1,7 +1,7 @@
 {
  "_meta": {
   "description": "NullReceiver campaign IOCs \u2014 SINGLE SOURCE OF TRUTH for repo_guard_scan.py (push-time) and inf-org-malware-rescan.sh (weekly). Update THIS file only.",
-  "updated": "2026-08-15"
+  "updated": "2026-08-20"
  },
  "bad_blob_shas": {
   "c1a9ec600e907276f454ab23fd3795bd021c2386": "fa-solid-400.woff2 payload (31,206B JS)",
@@ -12,9 +12,7 @@
   "eth.blockscout.com",
   "166.88.134.62"
  ],
- "attack_config_hints": [
-  "createRequire(import.meta.url)"
- ],
+ "attack_config_hints": [],
  "oversized_config_bytes": 6000,
  "watched_configs": [
   "eslint.config.mjs",
@@ -35,5 +33,8 @@
   "4f54544f",
   "74727565",
   "00010000"
+ ],
+ "weak_config_hints": [
+  "createRequire(import.meta.url)"
  ]
 }

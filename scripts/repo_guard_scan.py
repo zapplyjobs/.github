@@ -16,6 +16,7 @@ IOCS = json.loads((Path(__file__).parent / "repo_guard_iocs.json").read_text())
 BAD_BLOB_SHAS = IOCS["bad_blob_shas"]
 MARKERS = [m.encode() for m in IOCS["markers"]]
 ATTACK_CONFIG_HINTS = IOCS["attack_config_hints"]
+WEAK_CONFIG_HINTS = IOCS.get("weak_config_hints", [])
 CONFIG_SIZE_LIMIT = IOCS["oversized_config_bytes"]
 CONFIGS = set(IOCS["watched_configs"])
 FONT_MAGICS = [bytes.fromhex(h) for h in IOCS["font_magics_hex"]]
@@ -77,7 +78,15 @@ for _, p in objs:
         blob = sh("git", "show", f"HEAD:{p}").stdout
         for hint in ATTACK_CONFIG_HINTS:
             if hint.encode() in blob:
-                findings.append(f"{p} contains attacker createRequire shim")
+                findings.append(f"{p} contains attacker config hint {hint!r}")
+        # Weak hints (standard Node ESM createRequire idiom, which the E158 prep shim
+        # also used) fire ONLY with corroboration — a campaign marker or an oversized
+        # config. Live false-positive: zapply-chrome-extension vite.config.js (legit
+        # since 2026-06). All observed campaign configs matched markers + oversize too.
+        if any(m in blob for m in MARKERS) or len(blob) > CONFIG_SIZE_LIMIT:
+            for hint in WEAK_CONFIG_HINTS:
+                if hint.encode() in blob:
+                    findings.append(f"{p} contains shim hint {hint!r} with corroboration (marker/oversize)")
         if len(blob) > CONFIG_SIZE_LIMIT:
             findings.append(f"{p} is {len(blob)}B (config files are normally <6KB — inspect for appended payload)")
 
