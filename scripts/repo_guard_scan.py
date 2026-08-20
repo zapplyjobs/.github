@@ -8,6 +8,7 @@ IOC source of truth: scripts/repo_guard_iocs.json NEXT TO THIS FILE (single sour
 shared with the workspace weekly rescan inf-org-malware-rescan.sh). Update the JSON only.
 """
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -74,7 +75,10 @@ if ".vscode/settings.json" in tracked:
 CONFIGS = ("eslint.config.mjs", "eslint.config.js", "babel.config.js", "astro.config.mjs",
            "next.config.mjs", "next.config.js", "vite.config.js", "eslint.config.ts")
 for _, p in objs:
-    if p in CONFIGS:
+    # Match by BASENAME: campaign samples hid configs in subdirs (preview/vite.config.js,
+    # zapply/astro.config.mjs) that exact-path matching skipped — found live 2026-08-20
+    # (zapply-cms-strapi, 31KB twin on main). Root files still match identically.
+    if os.path.basename(p) in CONFIGS:
         blob = sh("git", "show", f"HEAD:{p}").stdout
         for hint in ATTACK_CONFIG_HINTS:
             if hint.encode() in blob:
