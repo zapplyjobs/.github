@@ -46,6 +46,11 @@ for marker in MARKERS:
     r = sh("git", "grep", "-l", "-F", marker, "HEAD")
     if r.returncode == 0 and r.stdout.strip():
         for hit in r.stdout.decode(errors="replace").splitlines():
+            # INF-SEC-ACCOUNT-VECTOR-ROUND3-1: the scanner's OWN IOC file legitimately
+            # contains every marker (it IS the signature list) — scanning the .github
+            # repo that hosts it self-triggers. Skip the IOC source file itself.
+            if hit.endswith("scripts/repo_guard_iocs.json"):
+                continue
             findings.append(f"MARKER '{marker.decode()}' in {hit}")
 
 # 3. JavaScript hiding in font/asset extensions (magic mismatch + printable ratio)
