@@ -1,7 +1,7 @@
 {
  "_meta": {
   "description": "NullReceiver campaign IOCs \u2014 SINGLE SOURCE OF TRUTH for repo_guard_scan.py (push-time) and inf-org-malware-rescan.sh (weekly). Update THIS file only.",
-  "updated": "2026-08-20 (v2: packages + corroborators)",
+  "updated": "2026-08-23 \u2014 +mobile-app babel payload markers (:443/0x/ C2 path, global['_V'] loader var) + gitignore persistence filenames",
   "note": "malicious_packages: the ORIGINAL NullReceiver infection vector \u2014 zero GH advisories exist for these names (verified 2026-08-20), so Dependabot can never fire; the scanner checks manifest/lock files directly."
  },
  "bad_blob_shas": {
@@ -11,7 +11,9 @@
  "markers": [
   "A11--#",
   "eth.blockscout.com",
-  "166.88.134.62"
+  "166.88.134.62",
+  ":443/0x/",
+  "global['_V']"
  ],
  "attack_config_hints": [],
  "oversized_config_bytes": 6000,
@@ -46,5 +48,16 @@
   "tailwind-anim",
   "tailwind-animation-founder",
   "tailwindcss-anim"
+ ],
+ "gitignore_persistence": [
+  {
+   "added": "2026-08-23",
+   "why": "zapply-mobile-app develop branch incident (caught by Ramish 2026-08-11, commits 57da92fc/b8c3fd7c): attacker ADDED .gitignore entries to hide persistence artifacts \u2014 same toolbox as the cms-strapi branch incident (E161 batch 5)",
+   "filenames": [
+    "temp_auto_push.bat",
+    "temp_interactive_push.bat",
+    "branch_structure.json"
+   ]
+  }
  ]
 }

@@ -111,6 +111,15 @@ for _, p in objs:
             if _re.search(rf'(?<![\\w/.-]){_re.escape(pkg)}(?![\\w/.-])', blob):
                 findings.append(f"{p} references known-malicious package {pkg!r} (NullReceiver campaign)")
 
+# 7b. .gitignore persistence entries (mobile-app incident 2026-08-11, INF-SEC-ACCOUNT-VECTOR-ROUND3-1):
+# attacker ADDED .gitignore entries to hide persistence artifacts. IOC list carries the filenames.
+if ".gitignore" in tracked:
+    blob = sh("git", "show", "HEAD:.gitignore").stdout.decode(errors="replace")
+    for fn in IOCS.get("gitignore_persistence", []):
+        for fname in fn.get("filenames", []) if isinstance(fn, dict) else []:
+            if fname in blob:
+                findings.append(f".gitignore hides known persistence artifact {fname!r}")
+
 # 7. Hex-obfuscation corroborator for weak hints: campaign payloads carry distinctive
 # _0x-hex identifier tables. A markerless sub-6KB shim WITH _0x tables is now caught
 # (closes the window the createRequire demotion opened — sec-review finding, 2026-08-20).
