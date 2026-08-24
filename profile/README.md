@@ -43,6 +43,9 @@
   &nbsp;
   <a href="https://github.com/zapplyjobs/New-Grad-IT-Jobs-2027"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/new-grad-it-jobs-button.png" alt="New Grad IT Jobs 2027" height="50"></a>
 </p>
+<p align="center">
+  <a href="https://github.com/zapplyjobs/awesome-ML-internships"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/repo-ml.png" alt="AI & ML Internships 2027" height="50"></a>
+</p>
 
 ---
 
