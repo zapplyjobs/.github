@@ -78,7 +78,8 @@
         "index.js",
         "enrich-canada-visa.js",
         ".githooks/**",
-        "scripts/**"
+        "scripts/**",
+        "configs/**"
       ]
     },
     "job-board-processing": {
