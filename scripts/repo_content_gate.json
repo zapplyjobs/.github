@@ -1,0 +1,152 @@
+{
+  "_comment": "INF-REPO-CONTENT-GATE-1 phase 3 (operator-approved 2026-08-26): deny-by-default file allowlist per inventoried repo. Patterns are fnmatch against the tracked path. A repo NOT listed here is NOT content-gated (dev/product repos, consumer boards, private repos are out of scope). Source inventory: research/ZJP_REPO_FILE_INVENTORY_2026_08_25.md. Dispositions: configs/*.json allowed FOR NOW (operator approved keep-short-term; planned move into a private submodule per operator idea 2026-08-26); .wrangler/** explicitly denied everywhere.",
+  "repos": {
+    "jobs-aggregator-private": {
+      "allow": [
+        "README*",
+        "LICENSE",
+        "CHANGELOG*",
+        "NOTICE*",
+        ".gitignore",
+        ".gitattributes",
+        ".gitmodules",
+        ".github/**",
+        ".githooks/**",
+        ".pre-commit-config.yaml",
+        "package.json",
+        "package-lock.json",
+        "configs/*.json",
+        "docs/*.md",
+        ".pre-commit-config.yaml",
+        ".shellcheckrc"
+      ]
+    },
+    "jobs-data-2026": {
+      "allow": [
+        "README*",
+        "LICENSE",
+        "CHANGELOG*",
+        "NOTICE*",
+        ".gitignore",
+        ".gitattributes",
+        ".gitmodules",
+        ".github/**",
+        "package.json",
+        "package-lock.json",
+        "index.html",
+        "docs/*.md",
+        ".pre-commit-config.yaml",
+        ".shellcheckrc",
+        "scripts/**",
+        "docs/**"
+      ]
+    },
+    "job-board-shared": {
+      "allow": [
+        "README*",
+        "LICENSE",
+        "CHANGELOG*",
+        "NOTICE*",
+        ".gitignore",
+        ".gitattributes",
+        ".gitmodules",
+        ".github/**",
+        "package.json",
+        "package-lock.json",
+        "docs/*.md",
+        ".pre-commit-config.yaml",
+        ".shellcheckrc",
+        "tools/**"
+      ]
+    },
+    "job-board-aggregator": {
+      "allow": [
+        "README*",
+        "LICENSE",
+        "CHANGELOG*",
+        "NOTICE*",
+        ".gitignore",
+        ".gitattributes",
+        ".gitmodules",
+        ".github/**",
+        "package.json",
+        "package-lock.json",
+        "docs/*.md",
+        ".pre-commit-config.yaml",
+        ".shellcheckrc",
+        "lib/**",
+        "index.js",
+        "enrich-canada-visa.js",
+        ".githooks/**",
+        "scripts/**"
+      ]
+    },
+    "job-board-processing": {
+      "allow": [
+        "README*",
+        "LICENSE",
+        "CHANGELOG*",
+        "NOTICE*",
+        ".gitignore",
+        ".gitattributes",
+        ".gitmodules",
+        ".github/**",
+        "package.json",
+        "package-lock.json",
+        "docs/*.md",
+        ".pre-commit-config.yaml",
+        ".shellcheckrc",
+        "lib/**",
+        "index.js",
+        "enrich-canada-visa.js",
+        "schemas/**",
+        "scripts/**",
+        "supabase/**",
+        "tools/**"
+      ]
+    },
+    "job-board-consumer": {
+      "allow": [
+        "README*",
+        "LICENSE",
+        "CHANGELOG*",
+        "NOTICE*",
+        ".gitignore",
+        ".gitattributes",
+        ".gitmodules",
+        ".github/**",
+        "package.json",
+        "package-lock.json",
+        "docs/*.md",
+        ".pre-commit-config.yaml",
+        ".shellcheckrc",
+        "lib/**",
+        "index.js"
+      ]
+    },
+    ".github": {
+      "allow": [
+        "README*",
+        "LICENSE",
+        ".gitignore",
+        ".gitattributes",
+        ".github/**",
+        "scripts/*",
+        "scripts/**",
+        ".pre-commit-config.yaml",
+        ".shellcheckrc",
+        "actions/**",
+        "profile/**"
+      ]
+    }
+  },
+  "deny_everywhere": [
+    ".wrangler/**",
+    "*.sqlite",
+    "*.sqlite-shm",
+    "*.sqlite-wal",
+    "secrets.txt",
+    "*.env",
+    ".env*"
+  ]
+}

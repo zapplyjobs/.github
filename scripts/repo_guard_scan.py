@@ -130,6 +130,29 @@ for _, p in objs:
         if len(_0X_RE.findall(blob.decode(errors="replace"))) >= 5:
             findings.append(f"{p} contains hex-obfuscation identifier table (_0x) — inspect for disguised payload")
 
+# 8. Content gate (INF-REPO-CONTENT-GATE-1 phase 3, operator-approved 2026-08-26):
+# deny-by-default file allowlist for the inventoried ZJP main repos. A repo absent
+# from repo_content_gate.json is NOT gated. Source: research/ZJP_REPO_FILE_INVENTORY_2026_08_25.md.
+import fnmatch as _fn
+_gate_path = Path(__file__).parent / "repo_content_gate.json"
+if _gate_path.exists():
+    GATE = json.loads(_gate_path.read_text())
+    _repo = sh("git", "rev-parse", "--abbrev-ref", "HEAD").stdout.decode(errors="replace").strip() or ""
+    _origin = sh("git", "remote", "get-url", "origin").stdout.decode(errors="replace").strip()
+    # derive repo name from origin URL (workflow checkouts may be detached/HEAD-named)
+    import re as _re2
+    _m = _re2.search(r"[:/]([^/:]+?)(\.git)?$", _origin)
+    _repo_name = _m.group(1) if _m else ""
+    _rules = GATE.get("repos", {}).get(_repo_name)
+    if _rules:
+        _deny = GATE.get("deny_everywhere", [])
+        _allow = _rules.get("allow", [])
+        for _, p in objs:
+            if any(_fn.fnmatch(p, d) or _fn.fnmatch(os.path.basename(p), d) for d in _deny):
+                findings.append(f"CONTENT-GATE denied path {p} (deny_everywhere rule — runtime state/secrets class)")
+            elif not any(_fn.fnmatch(p, a) for a in _allow):
+                findings.append(f"CONTENT-GATE {p} not on the allowlist for {_repo_name} (INF-REPO-CONTENT-GATE-1; allowlist: scripts/repo_content_gate.json)")
+
 if findings:
     print("::error::repo-guard FAILED — known malware/injection shapes detected")
     for f in findings:
