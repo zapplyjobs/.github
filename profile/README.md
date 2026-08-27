@@ -42,7 +42,7 @@
 
 <hr>
 
-## 🎓 Live Internship Boards
+## 🎓 Curated Internships
 
 <p align="center">
   <a href="https://github.com/zapplyjobs/Internships-2027"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/repo-int.png" alt="Internships 2027" height="50"></a>
@@ -51,10 +51,6 @@
   &nbsp;
   <a href="https://github.com/zapplyjobs/awesome-ML-internships"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/repo-ml.png" alt="AI & ML Internships 2027" height="50"></a>
 </p>
-
----
-
-## 📋 Curated Lists
 
 <p align="center">
   <a href="https://github.com/zapplyjobs/Research-Internships-for-Undergraduates"><img src="https://raw.githubusercontent.com/zapplyjobs/New-Grad-Jobs-2027/main/images/repo-rifu.png" alt="Research Internships for Undergraduates" height="50"></a>
