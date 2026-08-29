@@ -134,15 +134,15 @@ for _, p in objs:
 # deny-by-default file allowlist for the inventoried ZJP main repos. A repo absent
 # from repo_content_gate.json is NOT gated. Source: research/ZJP_REPO_FILE_INVENTORY_2026_08_25.md.
 import fnmatch as _fn
+# repo-name derivation shared by the content gate (8) and the identity check (9)
+import re as _re2
+_origin = sh("git", "remote", "get-url", "origin").stdout.decode(errors="replace").strip()
+# derive repo name from origin URL (workflow checkouts may be detached/HEAD-named)
+_m = _re2.search(r"[:/]([^/:]+?)(\.git)?$", _origin)
+_repo_name = _m.group(1) if _m else ""
 _gate_path = Path(__file__).parent / "repo_content_gate.json"
 if _gate_path.exists():
     GATE = json.loads(_gate_path.read_text())
-    _repo = sh("git", "rev-parse", "--abbrev-ref", "HEAD").stdout.decode(errors="replace").strip() or ""
-    _origin = sh("git", "remote", "get-url", "origin").stdout.decode(errors="replace").strip()
-    # derive repo name from origin URL (workflow checkouts may be detached/HEAD-named)
-    import re as _re2
-    _m = _re2.search(r"[:/]([^/:]+?)(\.git)?$", _origin)
-    _repo_name = _m.group(1) if _m else ""
     _rules = GATE.get("repos", {}).get(_repo_name)
     if _rules:
         _deny = GATE.get("deny_everywhere", [])
@@ -153,6 +153,25 @@ if _gate_path.exists():
             elif not any(_fn.fnmatch(p, a) for a in _allow):
                 findings.append(f"CONTENT-GATE {p} not on the allowlist for {_repo_name} (INF-REPO-CONTENT-GATE-1; allowlist: scripts/repo_content_gate.json)")
 
+
+# 9. Committer/author identity allowlist (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1, phase 1):
+# ZJP main repos are effectively single-identity (census 2026-08-29: last-100 commits per repo,
+# identities = z-apply pipeline + ahd@local workstation + Data Bot archive automation, 0 others).
+# Catches human/stolen-session pushes that content signatures cannot see (the Ramish f4b24d5
+# class: authored X, committed as 'Littman05'). Scoped: only repos in identity_check.repos —
+# dev repos (diverse identities) are phase 2, alert-only, tuned against their history first.
+_IDC = IOCS.get("identity_check") or {}
+if _IDC.get("repos") and _repo_name in _IDC["repos"]:
+    _allow = {(i["name"], i["email"]) for i in _IDC.get("allowlist", [])}
+    _depth = int(_IDC.get("scan_depth", 20))
+    _log = sh("git", "log", f"-{_depth}", "--format=%an\x1f%ae\x1f%cn\x1f%ce", "HEAD").stdout.decode(errors="replace")
+    for _line in _log.splitlines():
+        _parts = _line.split("\x1f")
+        if len(_parts) != 4:
+            continue
+        for _kind, _name, _email in (("author", _parts[0], _parts[1]), ("committer", _parts[2], _parts[3])):
+            if (_name, _email) not in _allow and not _name.endswith("[bot]"):
+                findings.append(f"IDENTITY: {_kind} '{_name} <{_email}>' not on the ZJP identity allowlist — human/stolen-session push class (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1)")
 if findings:
     print("::error::repo-guard FAILED — known malware/injection shapes detected")
     for f in findings:

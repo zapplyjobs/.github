@@ -59,5 +59,27 @@
     "branch_structure.json"
    ]
   }
- ]
+],
+
+ "identity_check": {
+  "added": "2026-08-29",
+  "why": "phase 1: ZJP mains are single-identity (census 2026-08-29, last-100/repo: z-apply + ahd@local + Data Bot only). Catches human/stolen-session pushes content checks can't see (Ramish f4b24d5 'Littman05' class). Dev repos = phase 2 (alert-only, tuned). Enforcement = fail-closed per design; measured FP 0.",
+  "repos": [
+   "jobs-aggregator-private",
+   "jobs-data-2026",
+   "job-board-shared",
+   "job-board-aggregator",
+   "job-board-processing",
+   "job-board-consumer",
+   "jobs-archive-private",
+   ".github",
+   "zjp-dashboard"
+  ],
+  "scan_depth": 20,
+  "allowlist": [
+   {"name": "z-apply", "email": "admin@zapply.jobs"},
+   {"name": "ahd", "email": "ahd@local"},
+   {"name": "Data Bot", "email": "bot@zapplyjobs.com"}
+  ]
+ }
 }
