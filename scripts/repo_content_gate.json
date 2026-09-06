@@ -131,6 +131,8 @@
         ".gitignore",
         ".gitattributes",
         ".github/**",
+        "tests/**",
+        "tests/*",
         "scripts/*",
         "scripts/**",
         ".pre-commit-config.yaml",
