@@ -84,6 +84,9 @@ def main():
         git(repo, "init", "-b", "main")
         git(repo, "config", "user.name", "z-apply")
         git(repo, "config", "user.email", "admin@zapply.jobs")
+        # This throwaway fixture tests scanner behavior, not the developer's GPG
+        # setup. Keep its synthetic commits independent of a local signing agent.
+        git(repo, "config", "commit.gpgsign", "false")
         git(repo, "remote", "add", "origin", "https://github.com/zapplyjobs/job-board-processing.git")
 
         # Baseline allowlisted commit.

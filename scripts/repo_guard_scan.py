@@ -9,6 +9,7 @@ shared with the workspace weekly rescan inf-org-malware-rescan.sh). Update the J
 """
 import json
 import os
+import re as _re
 import subprocess
 import sys
 from pathlib import Path
@@ -24,6 +25,33 @@ CONFIGS = set(IOCS["watched_configs"])
 FONT_MAGICS = [bytes.fromhex(h) for h in IOCS["font_magics_hex"]]
 
 findings = []
+
+
+def is_normal_esm_require_resolve(blob):
+    """Recognize the narrow, normal Node ESM bridge used for module resolution.
+
+    ``createRequire(import.meta.url)`` is also present in the NullReceiver prep
+    sample, so it must not by itself exempt a file from the rest of the guard.
+    This helper only suppresses the *size-only* false positive when the bridge
+    is imported from Node's built-in module, initialized conventionally, and
+    its local ``require`` binding is used solely as ``require.resolve(...)``.
+    Markers, known blobs, asset checks, malicious packages, and obfuscation are
+    all evaluated separately and still fail the scan.
+    """
+    text = blob.decode(errors="replace")
+    if not _re.search(
+        r"import\s*\{\s*createRequire\s*\}\s*from\s*['\"]node:module['\"]",
+        text,
+    ):
+        return False
+    if not _re.search(
+        r"(?:const|let)\s+require\s*=\s*createRequire\(\s*import\.meta\.url\s*\)",
+        text,
+    ):
+        return False
+
+    uses = _re.findall(r"\brequire\s*(?:\.\s*resolve\s*\(|\()", text)
+    return bool(uses) and all("." in use for use in uses)
 
 
 def sh(*args):
@@ -90,20 +118,21 @@ for _, p in objs:
             if hint.encode() in blob:
                 findings.append(f"{p} contains attacker config hint {hint!r}")
         # Weak hints (standard Node ESM createRequire idiom, which the E158 prep shim
-        # also used) fire ONLY with corroboration — a campaign marker or an oversized
-        # config. Live false-positive: zapply-chrome-extension vite.config.js (legit
-        # since 2026-06). All observed campaign configs matched markers + oversize too.
-        if any(m in blob for m in MARKERS) or len(blob) > CONFIG_SIZE_LIMIT:
+        # also used) fire with a campaign marker, or with an oversized config unless
+        # it is the narrow Node built-in/require.resolve-only pattern below. The
+        # latter is legitimate Vite module resolution, not malware evidence by itself.
+        has_marker = any(m in blob for m in MARKERS)
+        is_normal_resolver = is_normal_esm_require_resolve(blob)
+        if has_marker or (len(blob) > CONFIG_SIZE_LIMIT and not is_normal_resolver):
             for hint in WEAK_CONFIG_HINTS:
                 if hint.encode() in blob:
                     findings.append(f"{p} contains shim hint {hint!r} with corroboration (marker/oversize)")
-        if len(blob) > CONFIG_SIZE_LIMIT:
+        if len(blob) > CONFIG_SIZE_LIMIT and not is_normal_resolver:
             findings.append(f"{p} is {len(blob)}B (config files are normally <6KB — inspect for appended payload)")
 
 # 6. Malicious-package names in dependency manifests/locks — the ORIGINAL infection
 # vector. Zero GitHub advisories exist for these names (verified 2026-08-20), so
 # Dependabot can never fire on them; direct string check is the only technical control.
-import re as _re
 for _, p in objs:
     if p in ("package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "npm-shrinkwrap.json"):
         blob = sh("git", "show", f"HEAD:{p}").stdout.decode(errors="replace")
