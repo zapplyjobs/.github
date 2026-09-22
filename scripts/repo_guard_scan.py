@@ -9,6 +9,7 @@ shared with the workspace weekly rescan inf-org-malware-rescan.sh). Update the J
 """
 import json
 import os
+import re as _re
 import subprocess
 import sys
 from pathlib import Path
@@ -24,6 +25,33 @@ CONFIGS = set(IOCS["watched_configs"])
 FONT_MAGICS = [bytes.fromhex(h) for h in IOCS["font_magics_hex"]]
 
 findings = []
+
+
+def is_normal_esm_require_resolve(blob):
+    """Recognize the narrow, normal Node ESM bridge used for module resolution.
+
+    ``createRequire(import.meta.url)`` is also present in the NullReceiver prep
+    sample, so it must not by itself exempt a file from the rest of the guard.
+    This helper only suppresses the *size-only* false positive when the bridge
+    is imported from Node's built-in module, initialized conventionally, and
+    its local ``require`` binding is used solely as ``require.resolve(...)``.
+    Markers, known blobs, asset checks, malicious packages, and obfuscation are
+    all evaluated separately and still fail the scan.
+    """
+    text = blob.decode(errors="replace")
+    if not _re.search(
+        r"import\s*\{\s*createRequire\s*\}\s*from\s*['\"]node:module['\"]",
+        text,
+    ):
+        return False
+    if not _re.search(
+        r"(?:const|let)\s+require\s*=\s*createRequire\(\s*import\.meta\.url\s*\)",
+        text,
+    ):
+        return False
+
+    uses = _re.findall(r"\brequire\s*(?:\.\s*resolve\s*\(|\()", text)
+    return bool(uses) and all("." in use for use in uses)
 
 
 def sh(*args):
@@ -90,20 +118,21 @@ for _, p in objs:
             if hint.encode() in blob:
                 findings.append(f"{p} contains attacker config hint {hint!r}")
         # Weak hints (standard Node ESM createRequire idiom, which the E158 prep shim
-        # also used) fire ONLY with corroboration — a campaign marker or an oversized
-        # config. Live false-positive: zapply-chrome-extension vite.config.js (legit
-        # since 2026-06). All observed campaign configs matched markers + oversize too.
-        if any(m in blob for m in MARKERS) or len(blob) > CONFIG_SIZE_LIMIT:
+        # also used) fire with a campaign marker, or with an oversized config unless
+        # it is the narrow Node built-in/require.resolve-only pattern below. The
+        # latter is legitimate Vite module resolution, not malware evidence by itself.
+        has_marker = any(m in blob for m in MARKERS)
+        is_normal_resolver = is_normal_esm_require_resolve(blob)
+        if has_marker or (len(blob) > CONFIG_SIZE_LIMIT and not is_normal_resolver):
             for hint in WEAK_CONFIG_HINTS:
                 if hint.encode() in blob:
                     findings.append(f"{p} contains shim hint {hint!r} with corroboration (marker/oversize)")
-        if len(blob) > CONFIG_SIZE_LIMIT:
+        if len(blob) > CONFIG_SIZE_LIMIT and not is_normal_resolver:
             findings.append(f"{p} is {len(blob)}B (config files are normally <6KB — inspect for appended payload)")
 
 # 6. Malicious-package names in dependency manifests/locks — the ORIGINAL infection
 # vector. Zero GitHub advisories exist for these names (verified 2026-08-20), so
 # Dependabot can never fire on them; direct string check is the only technical control.
-import re as _re
 for _, p in objs:
     if p in ("package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "npm-shrinkwrap.json"):
         blob = sh("git", "show", f"HEAD:{p}").stdout.decode(errors="replace")
@@ -163,15 +192,21 @@ if _gate_path.exists():
 _IDC = IOCS.get("identity_check") or {}
 if _IDC.get("repos") and _repo_name in _IDC["repos"]:
     _allow = {(i["name"], i["email"]) for i in _IDC.get("allowlist", [])}
+    _github_single_parent_exemptions = {
+        entry["commit"]
+        for entry in _IDC.get("github_single_parent_committer_exemptions", [])
+        if entry.get("commit")
+    }
     _depth = int(_IDC.get("scan_depth", 20))
-    _log = sh("git", "log", f"-{_depth}", "--format=%an\x1f%ae\x1f%cn\x1f%ce\x1f%p", "HEAD").stdout.decode(errors="replace")
+    _log = sh("git", "log", f"-{_depth}", "--format=%H\x1f%an\x1f%ae\x1f%cn\x1f%ce\x1f%p", "HEAD").stdout.decode(errors="replace")
     _GITHUB_MERGE_COMMITTERS = {("GitHub", "noreply@github.com")}
     for _line in _log.splitlines():
         _parts = _line.split("\x1f")
-        if len(_parts) != 5:
+        if len(_parts) != 6:
             continue
-        _parents = _parts[4].split()
-        for _kind, _name, _email in (("author", _parts[0], _parts[1]), ("committer", _parts[2], _parts[3])):
+        _sha = _parts[0]
+        _parents = _parts[5].split()
+        for _kind, _name, _email in (("author", _parts[1], _parts[2]), ("committer", _parts[3], _parts[4])):
             if (_name, _email) in _allow or _name.endswith("[bot]"):
                 continue
             # MERGECOMMIT-IDENTITY-GUARDFP-1 (2026-09-06, decision (a)): the sanctioned
@@ -179,8 +214,17 @@ if _IDC.get("repos") and _repo_name in _IDC["repos"]:
             # own machinery (noreply@github.com) — strict human-committer turned every
             # promotion into a red main-guard on a security channel (5+ in 2 days).
             # Allow ONLY the true API-merge shape: 2 parents + GitHub noreply committer.
-            # Author identity stays strict; 1-parent commits with that committer still fail.
+            # Author identity stays strict. A documented, exact-SHA historical exception
+            # is allowed only for a verified legacy web edit; any other 1-parent commit
+            # with that committer still fails.
             if _kind == "committer" and len(_parents) == 2 and (_name, _email) in _GITHUB_MERGE_COMMITTERS:
+                continue
+            if (
+                _kind == "committer"
+                and len(_parents) == 1
+                and (_name, _email) in _GITHUB_MERGE_COMMITTERS
+                and _sha in _github_single_parent_exemptions
+            ):
                 continue
             findings.append(f"IDENTITY: {_kind} '{_name} <{_email}>' not on the ZJP identity allowlist — human/stolen-session push class (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1)")
 if findings:

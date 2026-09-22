@@ -138,7 +138,9 @@
         ".pre-commit-config.yaml",
         ".shellcheckrc",
         "actions/**",
-        "profile/**"
+        "profile/**",
+        "assets/apply-faster-banner.png",
+        "assets/get-started-button.png"
       ]
     }
   },

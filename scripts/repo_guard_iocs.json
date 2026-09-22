@@ -80,6 +80,12 @@
    {"name": "z-apply", "email": "admin@zapply.jobs"},
    {"name": "ahd", "email": "ahd@local"},
    {"name": "Data Bot", "email": "bot@zapplyjobs.com"}
+  ],
+  "github_single_parent_committer_exemptions": [
+   {
+    "commit": "832d247698a75cfc75fd6b8a498e204e22c44de0",
+    "why": "Legitimate GitHub web edit: z-apply authored the one-file profile/README.md link update on 2026-09-12. The exact historical commit predates the two-parent GitHub merge-committer allowance."
+   }
   ]
  }
 }
