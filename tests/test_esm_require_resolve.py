@@ -61,10 +61,13 @@ const pdfWorker = require.resolve('pdfjs-dist/build/pdf.worker.mjs');
             "require.resolve('pdfjs-dist/build/pdf.worker.mjs')",
             "require('child_process')",
         )
+        # Construct the IOC only in the throwaway fixture. The committed test source
+        # must not contain a scanner marker, because repo-guard scans test files too.
+        marker = "eth." + "blockscout.com"
 
         for name, content, should_pass, expected in (
             ("normal resolver", normal, True, ""),
-            ("normal resolver with marker", normal + "\n// eth.blockscout.com\n", False, "MARKER"),
+            ("normal resolver with marker", normal + f"\n// {marker}\n", False, "MARKER"),
             ("non-resolve require use", unsafe_use, False, "shim hint"),
         ):
             repo = base / name.replace(" ", "-")

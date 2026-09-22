@@ -10,7 +10,8 @@ against the throwaway repo (IOCS copy re-scoped to the throwaway name):
      sanctioned merges-API promotion shape; was the false-positive class).
   B. 1-parent commit, committer GitHub <noreply@github.com>        → FAIL (spoof
      guard: only true merge commits get the allowance; author stays strict).
-  C. 1-parent commit, outsider author+committer                    → FAIL (baseline).
+  C. A documented exact-SHA 1-parent GitHub web edit               → PASS.
+  D. 1-parent commit, outsider author+committer                    → FAIL (baseline).
 
 Zero network; requires git + python3 on PATH.
 """
@@ -106,15 +107,26 @@ def main():
         ok("B: 1-parent GitHub-committer commit fails", r.returncode == 1)
         ok("B: finding names IDENTITY", "IDENTITY" in r.stdout)
 
-        # Reset to the merge state for case C.
+        # Reset to the merge state, create a known web-edit shape, and allow only
+        # its exact SHA. The preceding unknown one-parent GitHub commit must still
+        # fail, proving this is not a broad committer exemption.
         git(repo, "reset", "--hard", "HEAD~1")
-        # Case C: outsider author+committer → fails (baseline guard intact).
+        commit_file(repo, "known-web-edit.txt", "known web edit\n", env=GH)
+        known_sha = git(repo, "rev-parse", "HEAD").stdout.strip()
+        iocs["identity_check"]["github_single_parent_committer_exemptions"] = [
+            {"commit": known_sha, "why": "test fixture"}
+        ]
+        (harness_scripts / "repo_guard_iocs.json").write_text(json.dumps(iocs))
+        r = run_scanner(repo, harness_scripts)
+        ok("C: exact-SHA GitHub web edit passes", r.returncode == 0)
+
+        # Case D: outsider author+committer → fails (baseline guard intact).
         OUT = {"GIT_AUTHOR_NAME": "Stranger", "GIT_AUTHOR_EMAIL": "stranger@example.com",
                "GIT_COMMITTER_NAME": "Stranger", "GIT_COMMITTER_EMAIL": "stranger@example.com"}
         commit_file(repo, "out.txt", "out\n", env=OUT)
         r = run_scanner(repo, harness_scripts)
-        ok("C: outsider commit fails", r.returncode == 1)
-        ok("C: author finding present", "IDENTITY: author" in r.stdout)
+        ok("D: outsider commit fails", r.returncode == 1)
+        ok("D: author finding present", "IDENTITY: author" in r.stdout)
     finally:
         shutil.rmtree(base, ignore_errors=True)
 

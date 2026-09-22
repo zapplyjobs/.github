@@ -192,15 +192,21 @@ if _gate_path.exists():
 _IDC = IOCS.get("identity_check") or {}
 if _IDC.get("repos") and _repo_name in _IDC["repos"]:
     _allow = {(i["name"], i["email"]) for i in _IDC.get("allowlist", [])}
+    _github_single_parent_exemptions = {
+        entry["commit"]
+        for entry in _IDC.get("github_single_parent_committer_exemptions", [])
+        if entry.get("commit")
+    }
     _depth = int(_IDC.get("scan_depth", 20))
-    _log = sh("git", "log", f"-{_depth}", "--format=%an\x1f%ae\x1f%cn\x1f%ce\x1f%p", "HEAD").stdout.decode(errors="replace")
+    _log = sh("git", "log", f"-{_depth}", "--format=%H\x1f%an\x1f%ae\x1f%cn\x1f%ce\x1f%p", "HEAD").stdout.decode(errors="replace")
     _GITHUB_MERGE_COMMITTERS = {("GitHub", "noreply@github.com")}
     for _line in _log.splitlines():
         _parts = _line.split("\x1f")
-        if len(_parts) != 5:
+        if len(_parts) != 6:
             continue
-        _parents = _parts[4].split()
-        for _kind, _name, _email in (("author", _parts[0], _parts[1]), ("committer", _parts[2], _parts[3])):
+        _sha = _parts[0]
+        _parents = _parts[5].split()
+        for _kind, _name, _email in (("author", _parts[1], _parts[2]), ("committer", _parts[3], _parts[4])):
             if (_name, _email) in _allow or _name.endswith("[bot]"):
                 continue
             # MERGECOMMIT-IDENTITY-GUARDFP-1 (2026-09-06, decision (a)): the sanctioned
@@ -208,8 +214,17 @@ if _IDC.get("repos") and _repo_name in _IDC["repos"]:
             # own machinery (noreply@github.com) — strict human-committer turned every
             # promotion into a red main-guard on a security channel (5+ in 2 days).
             # Allow ONLY the true API-merge shape: 2 parents + GitHub noreply committer.
-            # Author identity stays strict; 1-parent commits with that committer still fail.
+            # Author identity stays strict. A documented, exact-SHA historical exception
+            # is allowed only for a verified legacy web edit; any other 1-parent commit
+            # with that committer still fails.
             if _kind == "committer" and len(_parents) == 2 and (_name, _email) in _GITHUB_MERGE_COMMITTERS:
+                continue
+            if (
+                _kind == "committer"
+                and len(_parents) == 1
+                and (_name, _email) in _GITHUB_MERGE_COMMITTERS
+                and _sha in _github_single_parent_exemptions
+            ):
                 continue
             findings.append(f"IDENTITY: {_kind} '{_name} <{_email}>' not on the ZJP identity allowlist — human/stolen-session push class (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1)")
 if findings:
