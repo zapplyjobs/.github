@@ -13,6 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
+          fetch-depth: 20
           persist-credentials: false
       - name: Checkout guard scanner
         uses: actions/checkout@v5
