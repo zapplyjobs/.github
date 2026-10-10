@@ -75,6 +75,7 @@
    "job-board-aggregator",
    "job-board-processing",
    "job-board-consumer",
+   "jobs-archive-private",
    ".github",
    "zjp-dashboard"
   ],
