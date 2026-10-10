@@ -3,7 +3,7 @@
 Unit test: identity-check merge-committer allowance (MERGECOMMIT-IDENTITY-GUARDFP-1).
 
 Builds a throwaway git repo whose origin URL scopes it to an identity-checked repo,
-fabricates the three commit shapes that matter, and runs the REAL scanner script
+fabricates the commit shapes that matter, and runs the REAL scanner script
 against the throwaway repo (IOCS copy re-scoped to the throwaway name):
 
   A. 2-parent merge commit, committer GitHub <noreply@github.com>  → PASS (the
@@ -12,6 +12,11 @@ against the throwaway repo (IOCS copy re-scoped to the throwaway name):
      guard: only true merge commits get the allowance; author stays strict).
   C. A documented exact-SHA 1-parent GitHub web edit               → PASS.
   D. 1-parent commit, outsider author+committer                    → FAIL (baseline).
+
+  E. Registered lane identity (identity_check.lanes) on the org email -> PASS.
+  F. Unregistered lane-style name on an allowlisted email            -> FAIL.
+  G. Registered lane name with a foreign email                       -> FAIL (email is the boundary).
+  H. Registered automation name (Aggregator Bot)                     -> PASS.
 
 Zero network; requires git + python3 on PATH.
 """
@@ -127,6 +132,50 @@ def main():
         r = run_scanner(repo, harness_scripts)
         ok("D: outsider commit fails", r.returncode == 1)
         ok("D: author finding present", "IDENTITY: author" in r.stdout)
+
+        # Case E: registered lane identity on the org email -> passes (the 10-09
+        # incident shape; identity_check.lanes makes lane attribution legal).
+        LANE = {"GIT_AUTHOR_NAME": "AGG Lane", "GIT_AUTHOR_EMAIL": "admin@zapply.jobs",
+                "GIT_COMMITTER_NAME": "AGG Lane", "GIT_COMMITTER_EMAIL": "admin@zapply.jobs"}
+        git(repo, "reset", "--hard", "HEAD~1")
+        commit_file(repo, "lane.txt", "lane\n", env=LANE)
+        r = run_scanner(repo, harness_scripts)
+        ok("E: registered lane identity passes", r.returncode == 0)
+
+        # Case F: unknown lane-style name on the allowlisted email -> fails until
+        # registered (attribution is validated against the registry, not free-text).
+        UNK = {"GIT_AUTHOR_NAME": "Mystery Lane", "GIT_AUTHOR_EMAIL": "admin@zapply.jobs",
+               "GIT_COMMITTER_NAME": "Mystery Lane", "GIT_COMMITTER_EMAIL": "admin@zapply.jobs"}
+        git(repo, "reset", "--hard", "HEAD~1")
+        commit_file(repo, "unknown-lane.txt", "unknown\n", env=UNK)
+        r = run_scanner(repo, harness_scripts)
+        ok("F: unregistered name on allowlisted email fails", r.returncode == 1)
+        ok("F: finding names IDENTITY", "IDENTITY" in r.stdout)
+
+        # Case G: registered lane NAME with a foreign email -> fails (the email is
+        # the account boundary; a name never grants access).
+        EVIL = {"GIT_AUTHOR_NAME": "AGG Lane", "GIT_AUTHOR_EMAIL": "attacker@evil.com",
+                "GIT_COMMITTER_NAME": "AGG Lane", "GIT_COMMITTER_EMAIL": "attacker@evil.com"}
+        git(repo, "reset", "--hard", "HEAD~1")
+        commit_file(repo, "evil-email.txt", "evil\n", env=EVIL)
+        r = run_scanner(repo, harness_scripts)
+        ok("G: registered lane name with foreign email fails", r.returncode == 1)
+
+        # Case H: registered automation name on its allowlisted email -> passes.
+        AB = {"GIT_AUTHOR_NAME": "Aggregator Bot", "GIT_AUTHOR_EMAIL": "bot@zapplyjobs.com",
+              "GIT_COMMITTER_NAME": "Aggregator Bot", "GIT_COMMITTER_EMAIL": "bot@zapplyjobs.com"}
+        git(repo, "reset", "--hard", "HEAD~1")
+        commit_file(repo, "bot.txt", "bot\n", env=AB)
+        r = run_scanner(repo, harness_scripts)
+        ok("H: registered automation name passes", r.returncode == 0)
+
+        # Case I: [bot]-suffixed name on a NON-github email -> fails (closes the old
+        # any-email [bot]-name bypass; platform bots ride noreply domains).
+        SPOOFBOT = {"GIT_AUTHOR_NAME": "evil[bot]", "GIT_AUTHOR_EMAIL": "evil@example.com",
+                    "GIT_COMMITTER_NAME": "evil[bot]", "GIT_COMMITTER_EMAIL": "evil@example.com"}
+        commit_file(repo, "spoofbot.txt", "spoofbot\n", env=SPOOFBOT)
+        r = run_scanner(repo, harness_scripts)
+        ok("I: bot-name with foreign email fails", r.returncode == 1)
     finally:
         shutil.rmtree(base, ignore_errors=True)
 

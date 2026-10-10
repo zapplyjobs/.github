@@ -183,15 +183,23 @@ if _gate_path.exists():
                 findings.append(f"CONTENT-GATE {p} not on the allowlist for {_repo_name} (INF-REPO-CONTENT-GATE-1; allowlist: scripts/repo_content_gate.json)")
 
 
-# 9. Committer/author identity allowlist (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1, phase 1):
-# ZJP main repos are effectively single-identity (census 2026-08-29: last-100 commits per repo,
-# identities = z-apply pipeline + ahd@local workstation + Data Bot archive automation, 0 others).
-# Catches human/stolen-session pushes that content signatures cannot see (the Ramish f4b24d5
+# 9. Committer/author identity gate (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1):
+# EMAIL is the account/security boundary: only allowlisted ZJP account emails may
+# author or commit on the gated repos. NAME is attribution and must be a standard
+# identity, a lane registered in identity_check.lanes, or a *[bot] automation name
+# (non-allowlisted bot emails accepted only when github-noreply-shaped). 10-10
+# redesign: the old tuple(name,email) match rejected legit lane display names on
+# allowlisted org emails (AGG Lane, 10-09 incident) and any name ending [bot]
+# passed on ANY email (spoofable). Catches human/stolen-session pushes (the Ramish f4b24d5
 # class: authored X, committed as 'Littman05'). Scoped: only repos in identity_check.repos —
 # dev repos (diverse identities) are phase 2, alert-only, tuned against their history first.
 _IDC = IOCS.get("identity_check") or {}
 if _IDC.get("repos") and _repo_name in _IDC["repos"]:
-    _allow = {(i["name"], i["email"]) for i in _IDC.get("allowlist", [])}
+    _allow_emails = {i["email"].strip().lower() for i in _IDC.get("allowlist", [])}
+    _known_names = (
+        {i["name"] for i in _IDC.get("allowlist", [])}
+        | {lane["name"] for lane in _IDC.get("lanes", [])}
+    )
     _github_single_parent_exemptions = {
         entry["commit"]
         for entry in _IDC.get("github_single_parent_committer_exemptions", [])
@@ -207,7 +215,14 @@ if _IDC.get("repos") and _repo_name in _IDC["repos"]:
         _sha = _parts[0]
         _parents = _parts[5].split()
         for _kind, _name, _email in (("author", _parts[1], _parts[2]), ("committer", _parts[3], _parts[4])):
-            if (_name, _email) in _allow or _name.endswith("[bot]"):
+            _email_ok = _email.strip().lower() in _allow_emails
+            _name_ok = _name in _known_names or _name.endswith("[bot]")
+            # Platform automation shapes (dependabot etc.): bot NAME + a GitHub
+            # noreply email domain. Closes the old any-email [bot]-name bypass.
+            _github_bot = _name.endswith("[bot]") and (
+                _email == "noreply@github.com" or _email.lower().endswith("users.noreply.github.com")
+            )
+            if (_email_ok and _name_ok) or _github_bot:
                 continue
             # MERGECOMMIT-IDENTITY-GUARDFP-1 (2026-09-06, decision (a)): the sanctioned
             # merges-API promotion route creates merge commits whose COMMITTER is GitHub's
@@ -226,7 +241,7 @@ if _IDC.get("repos") and _repo_name in _IDC["repos"]:
                 and _sha in _github_single_parent_exemptions
             ):
                 continue
-            findings.append(f"IDENTITY: {_kind} '{_name} <{_email}>' not on the ZJP identity allowlist — human/stolen-session push class (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1)")
+            findings.append(f"IDENTITY: {_kind} '{_name} <{_email}>' rejected (email must be an allowlisted ZJP account; name must be a standard identity or a lane registered in scripts/repo_guard_iocs.json identity_check.lanes; cure: recommit as z-apply, or register the lane/automation name via a 1-file edit in zapplyjobs/.github) — human/stolen-session push class (INF-COMMITTER-IDENTITY-MISMATCH-CHECK-1)")
 if findings:
     print("::error::repo-guard FAILED — known malware/injection shapes detected")
     for f in findings:
