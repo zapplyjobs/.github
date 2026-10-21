@@ -200,6 +200,12 @@ if _IDC.get("repos") and _repo_name in _IDC["repos"]:
         {i["name"] for i in _IDC.get("allowlist", [])}
         | {lane["name"] for lane in _IDC.get("lanes", [])}
     )
+    # INF-REPOGUARD-WEBMERGE-LANE-1 fix (2026-10-21): a registered lane is an exact
+    # (name, email) COMMITTER identity — the old pass condition required
+    # _email_ok AND _name_ok, and lane emails (e.g. noreply@github.com) are never
+    # allowlisted, so the GitHub web-flow lane registered 10-20 could never pass.
+    # Lanes bless the COMMITTER only; author identity stays strict.
+    _lanes_pairs = {(lane["name"], lane["email"]) for lane in _IDC.get("lanes", [])}
     _github_single_parent_exemptions = {
         entry["commit"]
         for entry in _IDC.get("github_single_parent_committer_exemptions", [])
@@ -222,7 +228,9 @@ if _IDC.get("repos") and _repo_name in _IDC["repos"]:
             _github_bot = _name.endswith("[bot]") and (
                 _email == "noreply@github.com" or _email.lower().endswith("users.noreply.github.com")
             )
-            if (_email_ok and _name_ok) or _github_bot:
+            if (_email_ok and _name_ok) or _github_bot or (
+                _kind == "committer" and (_name, _email) in _lanes_pairs
+            ):
                 continue
             # MERGECOMMIT-IDENTITY-GUARDFP-1 (2026-09-06, decision (a)): the sanctioned
             # merges-API promotion route creates merge commits whose COMMITTER is GitHub's
@@ -232,6 +240,9 @@ if _IDC.get("repos") and _repo_name in _IDC["repos"]:
             # Author identity stays strict. A documented, exact-SHA historical exception
             # is allowed only for a verified legacy web edit; any other 1-parent commit
             # with that committer still fails.
+            # SUPERSEDED for lane pairs (2026-10-21, INF-REPOGUARD-WEBMERGE-LANE-1):
+            # registered lanes pass above on any parent count; these parent-count
+            # branches remain as the fallback if the lane is ever withdrawn.
             if _kind == "committer" and len(_parents) == 2 and (_name, _email) in _GITHUB_MERGE_COMMITTERS:
                 continue
             if (

@@ -8,8 +8,11 @@ against the throwaway repo (IOCS copy re-scoped to the throwaway name):
 
   A. 2-parent merge commit, committer GitHub <noreply@github.com>  → PASS (the
      sanctioned merges-API promotion shape; was the false-positive class).
-  B. 1-parent commit, committer GitHub <noreply@github.com>        → FAIL (spoof
-     guard: only true merge commits get the allowance; author stays strict).
+  B. 1-parent commit, committer GitHub <noreply@github.com>        → PASS
+     (INF-REPOGUARD-WEBMERGE-LANE-1: the registered web-flow lane is an exact
+     (name,email) committer pair; squash/rebase web merges are 1-parent).
+  B2. Same lane NAME with a foreign email                          → FAIL (the
+     lane is a pair, never a name grant — the spoof tripwire).
   C. A documented exact-SHA 1-parent GitHub web edit               → PASS.
   D. 1-parent commit, outsider author+committer                    → FAIL (baseline).
 
@@ -106,15 +109,26 @@ def main():
         r = run_scanner(repo, harness_scripts)
         ok("A: 2-parent GitHub-merge commit passes", r.returncode == 0)
 
-        # Case B: 1-parent commit with the GitHub committer (spoof shape) → must fail.
+        # Case B: 1-parent commit with the registered web-flow lane committer —
+        # PASSES (INF-REPOGUARD-WEBMERGE-LANE-1: squash/rebase web merges are
+        # 1-parent; the lane blesses the exact (name, email) committer pair and
+        # the author stays strict).
         commit_file(repo, "spoof.txt", "spoof\n", env=GH)
         r = run_scanner(repo, harness_scripts)
-        ok("B: 1-parent GitHub-committer commit fails", r.returncode == 1)
-        ok("B: finding names IDENTITY", "IDENTITY" in r.stdout)
+        ok("B: 1-parent registered-lane committer passes", r.returncode == 0)
+
+        # Case B2: spoof tripwire — same lane NAME, foreign email -> FAIL. A lane
+        # is an exact (name, email) pair, never a name grant.
+        EVILGH = {"GIT_AUTHOR_NAME": "z-apply", "GIT_AUTHOR_EMAIL": "admin@zapply.jobs",
+                  "GIT_COMMITTER_NAME": "GitHub", "GIT_COMMITTER_EMAIL": "attacker@evil.com"}
+        commit_file(repo, "spoof2.txt", "spoof2\n", env=EVILGH)
+        r = run_scanner(repo, harness_scripts)
+        ok("B2: GitHub name with foreign email fails", r.returncode == 1)
+        ok("B2: finding names IDENTITY", "IDENTITY" in r.stdout)
 
         # Reset to the merge state, create a known web-edit shape, and allow only
-        # its exact SHA. The preceding unknown one-parent GitHub commit must still
-        # fail, proving this is not a broad committer exemption.
+        # its exact SHA. The lane path already passes this shape; the exact-SHA
+        # exemption branch stays as the fallback if the lane is ever withdrawn.
         git(repo, "reset", "--hard", "HEAD~1")
         commit_file(repo, "known-web-edit.txt", "known web edit\n", env=GH)
         known_sha = git(repo, "rev-parse", "HEAD").stdout.strip()
